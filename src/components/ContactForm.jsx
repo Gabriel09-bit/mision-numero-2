@@ -50,7 +50,12 @@ const ContactForm = ({ addContact }) => {
             onChange={handleChange}
             placeholder="Ingresa el nombre completo"
             className="input-modern"
+            maxLength={30}
+            required
           />
+          {formData.name.length >= 30 && (
+            <span className="limited-warning">Máximo 30 caracteres</span>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -82,7 +87,12 @@ const ContactForm = ({ addContact }) => {
             onChange={handleChange}
             placeholder="Ingresa el número de teléfono"
             className="input-modern"
+            maxLength={15}
+            required
           />
+          {formData.phone.length >= 15 && (
+            <span className="limited-warning">Máximo 15 caracteres</span>
+          )}
         </div>
 
         <div className="space-y-2">

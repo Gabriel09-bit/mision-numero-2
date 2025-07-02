@@ -1,32 +1,41 @@
 import React from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { Moon, Sun, User, Settings, Home } from 'lucide-react';
+import { User, Settings, Home, LogOut } from 'lucide-react';
 
-export default function Navbar({ isAuthenticated, onLogout, currentUser, darkMode, setDarkMode }) {
+export default function Navbar({ isAuthenticated, onLogout, currentUser }) {
   const location = useLocation();
 
   return (
-    <nav className="navbar" style={{ marginBottom: 0, paddingBottom: 0 }}>
-      <div className="navbar-content" style={{ padding: 0, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-bold text-white tracking-tight" style={{ letterSpacing: "1px" }}>
+    <nav className="navbar navbar-float" style={{ marginBottom: 0, paddingBottom: 0 }}>
+      <div className="navbar-content">
+        {/* Izquierda: Links */}
+        <div className="navbar-links" style={{ flex: 1, justifyContent: "flex-start" }}>
+          <NavLinkAnimated to="/" active={location.pathname === "/"}>
+            <Home className="w-4 h-4" /> Inicio
+          </NavLinkAnimated>
+          <NavLinkAnimated to="/info" active={location.pathname === "/info"}>
+            <Settings className="w-4 h-4" /> Información
+          </NavLinkAnimated>
+          {isAuthenticated && (
+            <NavLinkAnimated to="/profile" active={location.pathname.startsWith("/profile")}>
+              <User className="w-4 h-4" /> Perfil
+            </NavLinkAnimated>
+          )}
+        </div>
+        {/* Centro: Título estático */}
+        <div style={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          pointerEvents: "none"
+        }}>
+          <h1 className="navbar-title" style={{ pointerEvents: "auto" }}>
             NexusBook
           </h1>
-          <div className="navbar-links">
-            <Link to="/" className={location.pathname === "/" ? "active-link" : ""}>
-              <Home className="w-4 h-4" /> Inicio
-            </Link>
-            <Link to="/info" className={location.pathname === "/info" ? "active-link" : ""}>
-              <Settings className="w-4 h-4" /> Información
-            </Link>
-            {isAuthenticated && (
-              <Link to="/profile" className={location.pathname.startsWith("/profile") ? "active-link" : ""}>
-                <User className="w-4 h-4" /> Perfil
-              </Link>
-            )}
-          </div>
         </div>
-        <div className="flex items-center gap-2">
+        {/* Derecha: Avatar y logout */}
+        <div className="navbar-links" style={{ flex: 1, justifyContent: "flex-end", gap: "1.5em", display: "flex", alignItems: "center" }}>
           {isAuthenticated && currentUser?.avatar && (
             <img
               src={currentUser.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(currentUser.name)}
@@ -42,25 +51,40 @@ export default function Navbar({ isAuthenticated, onLogout, currentUser, darkMod
               }}
             />
           )}
-          <button
-            onClick={() => setDarkMode(dm => !dm)}
-            className="ml-4 bg-white/10 hover:bg-white/20 text-white border-0 rounded-xl w-12 h-12 flex items-center justify-center hover:scale-110 transition-all duration-300"
-            style={{ fontSize: 20, marginLeft: 16, cursor: 'pointer' }}
-            title="Cambiar modo oscuro"
-          >
-            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
           {isAuthenticated && (
-            <button
-              className="button logout-btn"
-              onClick={onLogout}
-              style={{ marginLeft: 12 }}
-            >
-              Cerrar sesión
-            </button>
+            <NavLinkAnimated as="button" onClick={onLogout} logout>
+              <LogOut className="w-4 h-4" /> Cerrar sesión
+            </NavLinkAnimated>
           )}
         </div>
       </div>
     </nav>
+  );
+}
+
+// Componente para animación de links y botón logout
+function NavLinkAnimated({ to, active, children, as = "link", onClick, logout }) {
+  const Tag = as === "button" ? "button" : Link;
+  return (
+    <Tag
+      to={to}
+      onClick={onClick}
+      className={`nav-anim-link${active ? " active-link" : ""}${logout ? " logout-link" : ""}`}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        fontWeight: 700,
+        fontSize: "1.1em",
+        border: "none",
+        background: "none",
+        cursor: "pointer",
+        padding: "0.5em 1.3em",
+        borderRadius: "10px",
+        transition: "background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s"
+      }}
+    >
+      {children}
+    </Tag>
   );
 }

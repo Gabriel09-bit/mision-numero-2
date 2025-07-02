@@ -141,15 +141,36 @@ function App() {
     return () => window.removeEventListener('exportContacts', handler);
   }, [exportContacts]);
 
+  // Cargar contactos desde localStorage al iniciar o al cambiar de usuario
+  useEffect(() => {
+    if (currentUser) {
+      const savedContacts = localStorage.getItem(`contacts_${currentUser.id}`);
+      if (savedContacts) {
+        setContacts(JSON.parse(savedContacts));
+      } else {
+        setContacts([]);
+      }
+    }
+  }, [currentUser]);
+
+  // Guardar contactos en localStorage cada vez que cambian y hay usuario
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem(`contacts_${currentUser.id}`, JSON.stringify(contacts));
+    }
+  }, [contacts, currentUser]);
+
   return (
     <BrowserRouter>
-      <Navbar
-        isAuthenticated={isAuthenticated}
-        onLogout={handleLogout}
-        currentUser={currentUser}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-      />
+      {isAuthenticated && (
+        <Navbar
+          isAuthenticated={isAuthenticated}
+          onLogout={handleLogout}
+          currentUser={currentUser}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
+      )}
       {notification && (
         <div className="notification">{notification}</div>
       )}
@@ -158,7 +179,7 @@ function App() {
           <Route path="/login" element={
             isAuthenticated
               ? <Navigate to="/" />
-              : <Login onLogin={handleLogin} />
+              : <Login onLogin={handleLogin} darkMode={darkMode} setDarkMode={setDarkMode} />
           } />
           <Route path="/info" element={
             isAuthenticated
@@ -261,6 +282,11 @@ function App() {
           } />
         </Routes>
       </div>
+      <hr style={{
+  border: "none",
+  borderTop: "2px solid #eaeaea",
+  margin: "2em 0"
+}} />
       <style>
         {`
           body, .container, .card-modern, .contact-form, .contact-list, .contact-item, .profile-container, .profile-section, .login-container, input, textarea, select {
@@ -268,6 +294,17 @@ function App() {
           }
         `}
       </style>
+      {/* Botón de modo oscuro fijo en la esquina superior derecha */}
+<button
+  onClick={() => setDarkMode(dm => !dm)}
+  className="dark-toggle-fixed"
+  title="Cambiar modo oscuro"
+>
+  {darkMode
+    ? <svg width="28" height="28" fill="#FFD700" viewBox="0 0 24 24"><path d="M12 18a6 6 0 0 1 0-12v12z"/></svg>
+    : <svg width="28" height="28" fill="#7b2ff2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+  }
+</button>
     </BrowserRouter>
   );
 }

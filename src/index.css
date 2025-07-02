@@ -70,3 +70,33 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.dark-toggle-fixed {
+  position: fixed;
+  top: 24px;
+  right: 32px;
+  z-index: 1000;
+  background: linear-gradient(90deg, #7b2ff2 0%, #4f8cff 100%);
+  border: none;
+  border-radius: 50%;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 24px #7b2ff244;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.dark-toggle-fixed:hover {
+  background: linear-gradient(90deg, #4f8cff 0%, #00c9a7 100%);
+  transform: scale(1.08) rotate(10deg);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+.card-modern {
+  animation: fadeInUp 0.7s cubic-bezier(.4,0,.2,1);
+}

@@ -3,41 +3,34 @@ import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from '
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
+function getMonthYear(dateStr) {
+  const date = new Date(dateStr);
+  return `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+}
+
 export default function ContactChart({ contacts }) {
-  const total = contacts.length;
-  const withEmail = contacts.filter(c => c.email).length;
-  const withPhone = contacts.filter(c => c.phone).length;
+  // Agrupa por mes/año
+  const months = {};
+  contacts.forEach(c => {
+    const key = getMonthYear(c.createdAt || new Date());
+    months[key] = (months[key] || 0) + 1;
+  });
+  const labels = Object.keys(months);
+  const dataArr = Object.values(months);
 
   const data = {
-    labels: ['Total', 'Con Email', 'Con Teléfono'],
-    datasets: [
-      {
-        label: 'Contactos',
-        data: [total, withEmail, withPhone],
-        backgroundColor: [
-          'rgba(123,47,242,0.7)',
-          'rgba(79,140,255,0.7)',
-          'rgba(0,201,167,0.7)'
-        ],
-        borderRadius: 8,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: { enabled: true }
-    },
-    scales: {
-      y: { beginAtZero: true, ticks: { stepSize: 1 } }
-    }
+    labels,
+    datasets: [{
+      label: 'Contactos por mes',
+      data: dataArr,
+      backgroundColor: 'rgba(123,47,242,0.7)',
+      borderRadius: 8,
+    }]
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: "2em auto" }}>
-      <Bar data={data} options={options} />
+    <div className="chart-container">
+      <Bar data={data} options={{ responsive: true, plugins: { legend: { display: false } } }} />
     </div>
   );
 }
