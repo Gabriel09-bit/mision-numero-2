@@ -28,6 +28,7 @@ function App() {
   const [notification, setNotification] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Notificaciones
   const showNotification = (msg) => {
@@ -169,10 +170,53 @@ function App() {
           currentUser={currentUser}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
+          onSettings={() => setShowSettings(true)}
         />
       )}
       {notification && (
         <div className="notification">{notification}</div>
+      )}
+      {/* Modal de configuración */}
+      {showSettings && (
+        <div className="modal-bg" onClick={() => setShowSettings(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h2>Configuración</h2>
+            <div style={{ textAlign: "left", margin: "1.5em 0" }}>
+              <label style={{ display: "block", marginBottom: "1em" }}>
+                <input
+                  type="checkbox"
+                  style={{ marginRight: 8 }}
+                  checked={localStorage.getItem("notificaciones") === "on"}
+                  onChange={e => {
+                    localStorage.setItem("notificaciones", e.target.checked ? "on" : "off");
+                  }}
+                />
+                Activar notificaciones
+              </label>
+              <label style={{ display: "block", marginBottom: "1em" }}>
+                Idioma:
+                <select
+                  style={{ marginLeft: 8 }}
+                  defaultValue={localStorage.getItem("idioma") || "es"}
+                  onChange={e => localStorage.setItem("idioma", e.target.value)}
+                >
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+              <label style={{ display: "block", marginBottom: "1em" }}>
+                <input
+                  type="checkbox"
+                  style={{ marginRight: 8 }}
+                  checked={darkMode}
+                  onChange={() => setDarkMode(dm => !dm)}
+                />
+                Modo oscuro
+              </label>
+            </div>
+            <button className="button" onClick={() => setShowSettings(false)}>Cerrar</button>
+          </div>
+        </div>
       )}
       <div className="container">
         <Routes>

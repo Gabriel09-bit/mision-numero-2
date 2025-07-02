@@ -715,6 +715,19 @@ body.dark-mode .modal-content label {
   color: #7b2ff2;
 }
 
+.nav-settings-btn {
+  background: rgba(255,255,255,0.13);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5em;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
 .nav-settings-btn:hover {
   background: linear-gradient(90deg, #4f8cff 0%, #00c9a7 100%);
   transform: scale(1.12) rotate(18deg);
