@@ -363,6 +363,9 @@ body.dark-mode .button, body.dark-mode .button-gradient, body.dark-mode .logout-
   box-shadow: 0 2px 12px #7b2ff244;
   animation: fadeInOut 2.5s;
 }
+.notification.success { background: #00c9a7; color: #fff; }
+.notification.error { background: #ff5858; color: #fff; }
+.notification.info { background: #4f8cff; color: #fff; }
 @keyframes fadeInOut {
   0% { opacity: 0; }
   10% { opacity: 1; }
@@ -549,15 +552,15 @@ body.dark-mode .profile-bio {
 
 /* Chart container */
 .chart-container {
-  background: var(--card-light);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px #4f8cff22;
-  padding: 2em 1em;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px #7b2ff222;
+  padding: 2em 1.5em;
   margin: 2em auto;
-  max-width: 500px;
+  max-width: 600px;
 }
 body.dark-mode .chart-container {
-  background: var(--dark-card);
+  background: #232946;
 }
 
 /* Contact item image */
@@ -598,18 +601,18 @@ body.dark-mode .container {
 }
 
 .button-gradient {
-  transition: transform 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s;
+  background: linear-gradient(90deg, #7b2ff2 0%, #4f8cff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8em 2em;
+  font-weight: bold;
   box-shadow: 0 2px 8px #7b2ff244;
+  transition: background 0.18s, transform 0.18s;
 }
 .button-gradient:hover {
-  transform: scale(1.04) translateY(-2px);
-  box-shadow: 0 8px 24px #7b2ff244;
-}
-.button-gradient svg {
-  transition: transform 0.2s;
-}
-.button-gradient:hover svg {
-  transform: rotate(90deg) scale(1.2);
+  background: linear-gradient(90deg, #4f8cff 0%, #00c9a7 100%);
+  transform: scale(1.04);
 }
 
 /* Fondo animado para login */

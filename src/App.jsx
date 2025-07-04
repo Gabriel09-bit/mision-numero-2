@@ -20,19 +20,18 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
 
   // Contactos por usuario
-  const [contacts, setContacts] = useState([
-    { id: 1, name: "Juan Perez", email: "juan@mail.com", phone: "123456789", userId: 1 }
-  ]);
+  const [contacts, setContacts] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [search, setSearch] = useState("");
   const [notification, setNotification] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Notificaciones
-  const showNotification = (msg) => {
-    setNotification(msg);
+  const showNotification = (msg, type = "info") => {
+    setNotification({ msg, type });
     setTimeout(() => setNotification(""), 2500);
   };
 
@@ -42,9 +41,9 @@ function App() {
     if (user) {
       setIsAuthenticated(true);
       setCurrentUser(user);
-      showNotification("Bienvenido " + user.name);
+      showNotification(`Bienvenido ${user.name}`, "success");
     } else {
-      showNotification("Credenciales incorrectas");
+      showNotification("Credenciales incorrectas", "error");
     }
   };
 
@@ -52,42 +51,77 @@ function App() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setCurrentUser(null);
-    showNotification("Sesión cerrada");
+    showNotification("Sesión cerrada", "info");
   };
 
   // Agregar contacto (solo para usuario actual)
   const addContact = (contact) => {
     if (!currentUser) {
-      showNotification("Debes iniciar sesión para agregar contactos.");
+      showNotification("Debes iniciar sesión para agregar contactos.", "error");
       return;
     }
-    setContacts([
-      ...contacts,
-      { ...contact, id: Date.now(), userId: currentUser.id, favorite: false, createdAt: new Date().toISOString() }
-    ]);
-    showNotification("Contacto agregado");
+    setLoading(true);
+    fetch('http://localhost:3001/api/contacts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...contact,
+        userId: currentUser.id
+      })
+    })
+      .then(res => res.json())
+      .then(newContact => {
+        setContacts([...contacts, newContact]);
+        showNotification("Contacto agregado", "success");
+      })
+      .catch(() => showNotification("Error al agregar contacto", "error"))
+      .finally(() => setLoading(false));
   };
 
   // Editar contacto
   const editContact = (id, updatedContact) => {
-    setContacts(contacts.map(c => c.id === id ? { ...c, ...updatedContact } : c));
-    showNotification("Contacto editado");
+    setLoading(true);
+    fetch(`http://localhost:3001/api/contacts/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...updatedContact, userId: currentUser.id })
+    })
+      .then(res => res.json())
+      .then(updated => {
+        setContacts(contacts.map(c => c.id === id ? updated : c));
+        showNotification("Contacto editado", "success");
+      })
+      .catch(() => showNotification("Error al editar contacto", "error"))
+      .finally(() => setLoading(false));
   };
 
-  // Borrar contacto
+  // Borrar contacto con confirmación
   const deleteContact = (id) => {
-    setContacts(contacts.filter(c => c.id !== id));
-    showNotification("Contacto eliminado");
+    if (!window.confirm("¿Seguro que deseas eliminar este contacto?")) return;
+    setLoading(true);
+    fetch(`http://localhost:3001/api/contacts/${id}`, {
+      method: 'DELETE'
+    })
+      .then(() => {
+        setContacts(contacts.filter(c => c.id !== id));
+        showNotification("Contacto eliminado", "success");
+      })
+      .catch(() => showNotification("Error al eliminar contacto", "error"))
+      .finally(() => setLoading(false));
   };
 
   // Filtrado de contactos (solo los del usuario actual)
   const filteredContacts = contacts
     .filter(c => c.userId === (currentUser?.id ?? -1))
     .filter(c =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.email.toLowerCase().includes(search.toLowerCase())
+      (c.nombre || '').toLowerCase().includes(search.toLowerCase()) ||
+      (c.numero || '').toLowerCase().includes(search.toLowerCase()) ||
+      (c.tipo || '').toLowerCase().includes(search.toLowerCase()) ||
+      (c.pais || '').toLowerCase().includes(search.toLowerCase()) ||
+      (c.mensaje || '').toLowerCase().includes(search.toLowerCase())
     );
 
+  // Ordenar favoritos primero
   const sortedContacts = [
     ...filteredContacts.filter(c => c.favorite),
     ...filteredContacts.filter(c => !c.favorite)
@@ -102,9 +136,10 @@ function App() {
     }
   }, [darkMode]);
 
+  // Exportar contactos a CSV
   const exportContacts = () => {
-    const headers = ['Nombre', 'Email', 'Teléfono'];
-    const rows = filteredContacts.map(c => [c.name, c.email, c.phone]);
+    const headers = ['Nombre', 'Número', 'Tipo', 'País', 'Mensaje'];
+    const rows = filteredContacts.map(c => [c.nombre, c.numero, c.tipo, c.pais, c.mensaje]);
     let csvContent = "data:text/csv;charset=utf-8," 
       + [headers, ...rows].map(e => e.join(",")).join("\n");
     const encodedUri = encodeURI(csvContent);
@@ -116,10 +151,12 @@ function App() {
     document.body.removeChild(link);
   };
 
+  // Favoritos (solo frontend, para persistencia real, implementa en backend)
   const toggleFavorite = (id) => {
     setContacts(contacts.map(c => c.id === id ? { ...c, favorite: !c.favorite } : c));
   };
 
+  // Importar contactos desde CSV (nombre,numero,tipo,pais,mensaje)
   const handleImportCSV = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -127,39 +164,41 @@ function App() {
     reader.onload = (event) => {
       const lines = event.target.result.split('\n');
       const newContacts = lines.slice(1).map(line => {
-        const [name, email, phone] = line.split(',');
-        return { id: Date.now() + Math.random(), name, email, phone, userId: currentUser.id, createdAt: new Date().toISOString(), favorite: false };
-      }).filter(c => c.name && c.email && c.phone);
-      setContacts([...contacts, ...newContacts]);
-      showNotification("Contactos importados");
+        const [nombre, numero, tipo, pais, mensaje] = line.split(',');
+        return {
+          nombre: nombre?.trim(),
+          numero: numero?.trim(),
+          tipo: tipo?.trim(),
+          pais: pais?.trim(),
+          mensaje: mensaje?.trim() || "",
+          userId: currentUser.id
+        };
+      }).filter(c => c.nombre && c.numero && c.tipo && c.pais);
+      Promise.all(newContacts.map(contact =>
+        fetch('http://localhost:3001/api/contacts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(contact)
+        }).then(res => res.json())
+      )).then(importedContacts => {
+        setContacts([...contacts, ...importedContacts]);
+        showNotification("Contactos importados", "success");
+      });
     };
     reader.readAsText(file);
   };
 
-  useEffect(() => {
-    const handler = () => exportContacts();
-    window.addEventListener('exportContacts', handler);
-    return () => window.removeEventListener('exportContacts', handler);
-  }, [exportContacts]);
-
-  // Cargar contactos desde localStorage al iniciar o al cambiar de usuario
+  // Cargar contactos desde la API al iniciar sesión o cambiar de usuario
   useEffect(() => {
     if (currentUser) {
-      const savedContacts = localStorage.getItem(`contacts_${currentUser.id}`);
-      if (savedContacts) {
-        setContacts(JSON.parse(savedContacts));
-      } else {
-        setContacts([]);
-      }
+      setLoading(true);
+      fetch(`http://localhost:3001/api/contacts?userId=${currentUser.id}`)
+        .then(res => res.json())
+        .then(data => setContacts(data))
+        .catch(() => setContacts([]))
+        .finally(() => setLoading(false));
     }
   }, [currentUser]);
-
-  // Guardar contactos en localStorage cada vez que cambian y hay usuario
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem(`contacts_${currentUser.id}`, JSON.stringify(contacts));
-    }
-  }, [contacts, currentUser]);
 
   return (
     <BrowserRouter>
@@ -174,7 +213,12 @@ function App() {
         />
       )}
       {notification && (
-        <div className="notification">{notification}</div>
+        <div className={`notification ${notification.type || ""}`}>{notification.msg}</div>
+      )}
+      {loading && (
+        <div className="notification" style={{ background: "#7b2ff2", color: "#fff" }}>
+          Cargando...
+        </div>
       )}
       {/* Modal de configuración */}
       {showSettings && (
@@ -256,10 +300,12 @@ function App() {
                       }}
                     />
                   )}
-                  <h1 style={{ marginBottom: 0 }}>Bienvenido, <b>{currentUser?.name}</b></h1>
+                  <h1 style={{ marginBottom: 0, fontWeight: 900, color: "#4f8cff" }}>
+                    ¡Bienvenido, <b>{currentUser?.name}</b>!
+                  </h1>
                   <button
-                    className="button"
-                    style={{ margin: "1em auto", display: "block", fontSize: "1.1em" }}
+                    className="button registro-contactos"
+                    style={{ margin: "1.5em auto 0 auto", display: "block" }}
                     onClick={() => setShowForm(f => !f)}
                   >
                     {showForm ? "Cerrar registro de contacto" : "Registro de Contactos"}
@@ -279,15 +325,15 @@ function App() {
                   </div>
                   <div>
                     <span style={{ fontWeight: "bold", fontSize: "1.3em" }}>
-                      {contacts.filter(c => c.email).length}
+                      {contacts.filter(c => c.mensaje).length}
                     </span><br />
-                    <span style={{ color: "#888" }}>Con email</span>
+                    <span style={{ color: "#888" }}>Con mensaje</span>
                   </div>
                   <div>
                     <span style={{ fontWeight: "bold", fontSize: "1.3em" }}>
-                      {contacts.filter(c => c.phone).length}
+                      {contacts.filter(c => c.numero).length}
                     </span><br />
-                    <span style={{ color: "#888" }}>Con teléfono</span>
+                    <span style={{ color: "#888" }}>Con número</span>
                   </div>
                 </div>
 
@@ -295,12 +341,12 @@ function App() {
                   <input
                     className="search-input"
                     type="text"
-                    placeholder="Buscar por nombre, email o teléfono..."
+                    placeholder="Buscar por nombre, número, tipo, país o mensaje..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     style={{ flex: 1, minWidth: 220, padding: "0.7em", borderRadius: "8px", border: "1.5px solid #7b2ff2" }}
                   />
-                  <button className="button" onClick={exportContacts}>
+                  <button className="button button-gradient" onClick={exportContacts}>
                     Exportar contactos a CSV
                   </button>
                   <input
@@ -327,10 +373,10 @@ function App() {
         </Routes>
       </div>
       <hr style={{
-  border: "none",
-  borderTop: "2px solid #eaeaea",
-  margin: "2em 0"
-}} />
+        border: "none",
+        borderTop: "2px solid #eaeaea",
+        margin: "2em 0"
+      }} />
       <style>
         {`
           body, .container, .card-modern, .contact-form, .contact-list, .contact-item, .profile-container, .profile-section, .login-container, input, textarea, select {
@@ -339,18 +385,33 @@ function App() {
         `}
       </style>
       {/* Botón de modo oscuro fijo en la esquina superior derecha */}
-<button
-  onClick={() => setDarkMode(dm => !dm)}
-  className="dark-toggle-fixed"
-  title="Cambiar modo oscuro"
->
-  {darkMode
-    ? <svg width="28" height="28" fill="#FFD700" viewBox="0 0 24 24"><path d="M12 18a6 6 0 0 1 0-12v12z"/></svg>
-    : <svg width="28" height="28" fill="#7b2ff2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
-  }
-</button>
+      <button
+        onClick={() => setDarkMode(dm => !dm)}
+        className="dark-toggle-fixed"
+        title="Cambiar modo oscuro"
+      >
+        {darkMode
+          ? <svg width="28" height="28" fill="#FFD700" viewBox="0 0 24 24"><path d="M12 18a6 6 0 0 1 0-12v12z"/></svg>
+          : <svg width="28" height="28" fill="#7b2ff2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+        }
+      </button>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+export const getContacts = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const where = userId ? { userId: Number(userId) } : {};
+    const contacts = await prisma.contact.findMany({
+      where,
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json(contacts);
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

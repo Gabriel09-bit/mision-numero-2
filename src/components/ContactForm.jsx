@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import { Plus, Mail, Phone, User } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 const ContactForm = ({ addContact }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: ''
+    nombre: '',
+    numero: '',
+    tipo: '',
+    pais: '',
+    mensaje: ''
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone) {
-      alert('Por favor, completa todos los campos');
+    if (!formData.nombre || !formData.numero || !formData.tipo || !formData.pais) {
+      alert('Por favor, completa todos los campos obligatorios');
       return;
     }
     addContact(formData);
-    setFormData({ name: '', email: '', phone: '', message: '' });
-    alert('¡Contacto agregado exitosamente!');
+    setFormData({ nombre: '', numero: '', tipo: '', pais: '', mensaje: '' });
   };
 
   const handleChange = (e) => {
@@ -35,85 +35,63 @@ const ContactForm = ({ addContact }) => {
         </div>
         <h2 className="text-2xl font-bold text-gradient">Agregar nuevo contacto</h2>
       </div>
-
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold">
-            <User className="w-4 h-4" />
-            Nombre completo
-          </label>
+        <div>
+          <label>Nombre</label>
           <input
-            id="name"
-            name="name"
-            type="text"
-            value={formData.name}
+            name="nombre"
+            value={formData.nombre}
             onChange={handleChange}
-            placeholder="Ingresa el nombre completo"
+            placeholder="Nombre completo"
             className="input-modern"
-            maxLength={30}
             required
           />
-          {formData.name.length >= 30 && (
-            <span className="limited-warning">Máximo 30 caracteres</span>
-          )}
         </div>
-
-        <div className="space-y-2">
-          <label htmlFor="email" className="flex items-center gap-2 text-sm font-semibold">
-            <Mail className="w-4 h-4" />
-            Correo electrónico
-          </label>
+        <div>
+          <label>Número</label>
           <input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
+            name="numero"
+            value={formData.numero}
             onChange={handleChange}
-            placeholder="Ingresa el correo electrónico"
+            placeholder="Número de teléfono"
             className="input-modern"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="phone" className="flex items-center gap-2 text-sm font-semibold">
-            <Phone className="w-4 h-4" />
-            Teléfono
-          </label>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Ingresa el número de teléfono"
-            className="input-modern"
-            maxLength={15}
             required
           />
-          {formData.phone.length >= 15 && (
-            <span className="limited-warning">Máximo 15 caracteres</span>
-          )}
         </div>
-
-        <div className="space-y-2">
-          <label htmlFor="message" className="flex items-center gap-2 text-sm font-semibold">
-            Mensaje / Nota
-          </label>
+        <div>
+          <label>Tipo</label>
           <input
-            id="message"
-            name="message"
-            type="text"
-            value={formData.message || ""}
+            name="tipo"
+            value={formData.tipo}
             onChange={handleChange}
-            placeholder="Mensaje o nota para este contacto"
+            placeholder="Tipo de contacto"
             className="input-modern"
+            required
           />
         </div>
-
-        <button type="submit" className="button-gradient w-full">
-          <Plus className="w-4 h-4 mr-2" />
-          Agregar contacto
-        </button>
+        <div>
+          <label>País</label>
+          <input
+            name="pais"
+            value={formData.pais}
+            onChange={handleChange}
+            placeholder="País"
+            className="input-modern"
+            required
+          />
+        </div>
+        <div>
+          <label>Mensaje</label>
+          <textarea
+            name="mensaje"
+            value={formData.mensaje}
+            onChange={handleChange}
+            placeholder="Mensaje o nota"
+            className="input-modern"
+            rows={2}
+          />
+        </div>
+        <button className="button" type="submit">Agregar</button>
       </form>
     </div>
   );

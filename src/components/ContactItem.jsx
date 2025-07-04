@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
-    name: contact.name,
-    email: contact.email,
-    phone: contact.phone,
-    message: contact.message || ""
+    nombre: contact.nombre,
+    numero: contact.numero,
+    tipo: contact.tipo,
+    pais: contact.pais,
+    mensaje: contact.mensaje || ""
   });
 
   const handleChange = (e) => {
@@ -18,10 +19,8 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
     setEditing(false);
   };
 
-  // Avatar: usa imagen si existe, si no, iniciales
-  const avatarUrl = contact.avatar
-    ? contact.avatar
-    : `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&background=7b2ff2&color=fff`;
+  // Avatar: usa iniciales del nombre
+  const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.nombre || '')}&background=7b2ff2&color=fff`;
 
   return (
     <div className="contact-item" style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
@@ -41,29 +40,36 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
         {editing ? (
           <>
             <input
-              name="name"
-              value={form.name}
+              name="nombre"
+              value={form.nombre}
               onChange={handleChange}
               placeholder="Nombre"
               className="input-modern"
             />
             <input
-              name="email"
-              value={form.email}
+              name="numero"
+              value={form.numero}
               onChange={handleChange}
-              placeholder="Email"
+              placeholder="Número"
               className="input-modern"
             />
             <input
-              name="phone"
-              value={form.phone}
+              name="tipo"
+              value={form.tipo}
               onChange={handleChange}
-              placeholder="Teléfono"
+              placeholder="Tipo"
               className="input-modern"
             />
             <input
-              name="message"
-              value={form.message}
+              name="pais"
+              value={form.pais}
+              onChange={handleChange}
+              placeholder="País"
+              className="input-modern"
+            />
+            <input
+              name="mensaje"
+              value={form.mensaje}
               onChange={handleChange}
               placeholder="Mensaje o nota"
               className="input-modern"
@@ -74,7 +80,7 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
         ) : (
           <>
             <h3 style={{ marginBottom: 4 }}>
-              {contact.name}
+              {contact.nombre}
               <button
                 style={{
                   background: "none",
@@ -90,10 +96,11 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
                 {contact.favorite ? "★" : "☆"}
               </button>
             </h3>
-            <p style={{ margin: 0 }}>Email: {contact.email}</p>
-            <p style={{ margin: 0 }}>Teléfono: {contact.phone}</p>
+            <p style={{ margin: 0 }}><b>Número:</b> {contact.numero}</p>
+            <p style={{ margin: 0 }}><b>Tipo:</b> {contact.tipo}</p>
+            <p style={{ margin: 0 }}><b>País:</b> {contact.pais}</p>
             <p style={{ margin: "0.5em 0", color: "#7b2ff2", fontStyle: "italic" }}>
-              {contact.message || <span style={{ color: "#aaa" }}>Sin mensaje</span>}
+              {contact.mensaje || <span style={{ color: "#aaa" }}>Sin mensaje</span>}
             </p>
             <button className="button" onClick={() => setEditing(true)}>Editar</button>
             <button className="button" onClick={() => onDelete(contact.id)}>Eliminar</button>

@@ -26,3 +26,18 @@ const ContactList = ({ contacts, onEdit, onDelete, onToggleFavorite }) => (
 );
 
 export default ContactList;
+
+// Ejemplo de ContactItem.jsx
+function ContactItem({ contact, onEdit, onDelete }) {
+  return (
+    <div className="contact-item">
+      <div>
+        <b>Número:</b> {contact.numero}<br />
+        <b>Tipo:</b> {contact.tipo}<br />
+        <b>País:</b> {contact.pais}
+      </div>
+      <button onClick={() => onEdit(contact.id, contact)}>Editar</button>
+      <button onClick={() => onDelete(contact.id)}>Eliminar</button>
+    </div>
+  );
+}
