@@ -1,10 +1,15 @@
 import { Bar } from 'react-chartjs-2';
 import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import PropTypes from 'prop-types';
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const ContactChart = ({ contacts = [] }) => {
+  if (!contacts.length) {
+    return <div id="contact-chart" style={{ textAlign: 'center', color: '#888', margin: '2em 0' }}>No hay datos para graficar.</div>;
+  }
   const getMonthYear = (dateStr) => {
+    if (!dateStr) return 'Sin fecha';
     const date = new Date(dateStr);
     return `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
   };
@@ -38,6 +43,10 @@ const ContactChart = ({ contacts = [] }) => {
       <Bar data={data} />
     </div>
   );
+};
+
+ContactChart.propTypes = {
+  contacts: PropTypes.array
 };
 
 export default ContactChart;

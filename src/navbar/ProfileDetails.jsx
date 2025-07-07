@@ -1,6 +1,8 @@
+import PropTypes from 'prop-types';
+
 export default function ProfileDetails() {
   return (
-    <div className="profile-section">
+    <section className="profile-section" aria-label="Detalles del perfil">
       <h3>Detalles del Perfil</h3>
       <ul className="profile-list">
         <li><b>Nombre:</b> Juan Pérez</li>
@@ -8,6 +10,8 @@ export default function ProfileDetails() {
         <li><b>Teléfono:</b> 123456789</li>
         <li><b>Rol:</b> Administrador</li>
       </ul>
-    </div>
+    </section>
   );
 }
+
+ProfileDetails.propTypes = {};

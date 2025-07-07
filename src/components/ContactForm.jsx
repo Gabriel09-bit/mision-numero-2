@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Plus } from 'lucide-react';
 
 const ContactForm = ({ addContact }) => {
@@ -66,10 +67,16 @@ const ContactForm = ({ addContact }) => {
           <label>Mensaje</label>
           <textarea name="mensaje" value={formData.mensaje} onChange={handleChange} placeholder="Mensaje o nota" className="input-modern" rows={2} />
         </div>
-        <button className="button" type="submit">Agregar</button>
+        <button type="submit" className="button button-gradient" disabled={Object.keys(errors).length > 0}>
+          Agregar contacto
+        </button>
       </form>
     </div>
   );
+};
+
+ContactForm.propTypes = {
+  addContact: PropTypes.func.isRequired
 };
 
 export default ContactForm;

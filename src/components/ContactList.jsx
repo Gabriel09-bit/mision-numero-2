@@ -1,8 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ContactItem from './ContactItem';
 
 const ContactList = ({ contacts = [], onEdit, onDelete, onToggleFavorite }) => (
-  <div className="contact-list">
+  <div className="contact-list" role="list" aria-label="Lista de contactos">
     <h2 className="text-2xl font-bold text-gradient" style={{ textAlign: "center", marginBottom: "1em" }}>
       {Array.isArray(contacts) && contacts.length > 0 ? "Contactos encontrados" : "Sin contactos"}
     </h2>
@@ -24,6 +25,13 @@ const ContactList = ({ contacts = [], onEdit, onDelete, onToggleFavorite }) => (
     )}
   </div>
 );
+
+ContactList.propTypes = {
+  contacts: PropTypes.array,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
+  onToggleFavorite: PropTypes.func
+};
 
 export default ContactList;
 

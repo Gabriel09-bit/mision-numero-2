@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from 'prop-types';
 import { Settings, Moon, Sun } from "lucide-react";
 
 export default function Login({ onLogin, darkMode, setDarkMode }) {
@@ -8,6 +9,7 @@ export default function Login({ onLogin, darkMode, setDarkMode }) {
 
   const handleSubmit = e => {
     e.preventDefault();
+    if (!email || !password) return;
     onLogin(email, password);
   };
 
@@ -90,26 +92,34 @@ export default function Login({ onLogin, darkMode, setDarkMode }) {
           NexusBook
         </h1>
         <h2 style={{ marginBottom: "1.5em", color: "#7b2ff2" }}>Iniciar Sesión</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="login-form" aria-label="Formulario de inicio de sesión">
           <input
-            className="login-input"
             type="email"
             placeholder="Correo electrónico"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            aria-label="Correo electrónico"
           />
           <input
-            className="login-input"
             type="password"
             placeholder="Contraseña"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
+            aria-label="Contraseña"
           />
-          <button className="button" type="submit" style={{ width: "100%" }}>Entrar</button>
+          <button type="submit" className="button button-gradient" disabled={!email || !password} aria-label="Iniciar sesión">
+            Iniciar sesión
+          </button>
         </form>
       </div>
     </div>
   );
 }
+
+Login.propTypes = {
+  onLogin: PropTypes.func.isRequired,
+  darkMode: PropTypes.bool.isRequired,
+  setDarkMode: PropTypes.func.isRequired
+};

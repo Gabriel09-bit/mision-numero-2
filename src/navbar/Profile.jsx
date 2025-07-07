@@ -1,4 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
+import PropTypes from 'prop-types';
 import { useState } from "react";
 import { User, Edit2, Save, X, Camera } from "lucide-react";
 
@@ -21,12 +22,14 @@ export default function Profile({ currentUser, setCurrentUser, showNotification 
   };
 
   const handleSaveBio = () => {
+    if (!bioInput.trim()) return;
     setBio(bioInput);
     setEditing(false);
     showNotification && showNotification("Biografía actualizada");
   };
 
   const handleSaveName = () => {
+    if (!nameInput.trim()) return;
     setName(nameInput);
     setEditingName(false);
     showNotification && showNotification("Nombre actualizado");
@@ -77,12 +80,14 @@ export default function Profile({ currentUser, setCurrentUser, showNotification 
           {editingName ? (
             <div>
               <input
+                type="text"
                 value={nameInput}
                 onChange={e => setNameInput(e.target.value)}
                 className="input-modern"
                 style={{ width: "100%", marginBottom: "0.5em" }}
+                aria-label="Nombre de usuario"
               />
-              <button className="button" onClick={handleSaveName}><Save size={16} /> Guardar</button>
+              <button className="button" onClick={handleSaveName} aria-label="Guardar nombre"><Save size={16} /> Guardar</button>
               <button className="button" onClick={() => setEditingName(false)}><X size={16} /> Cancelar</button>
             </div>
           ) : (
@@ -105,8 +110,9 @@ export default function Profile({ currentUser, setCurrentUser, showNotification 
                 rows={2}
                 className="input-modern"
                 style={{ width: "100%", marginBottom: "0.5em" }}
+                aria-label="Biografía"
               />
-              <button className="button" onClick={handleSaveBio}><Save size={16} /> Guardar</button>
+              <button className="button" onClick={handleSaveBio} aria-label="Guardar biografía"><Save size={16} /> Guardar</button>
               <button className="button" onClick={() => setEditing(false)}><X size={16} /> Cancelar</button>
             </div>
           ) : (
@@ -127,3 +133,9 @@ export default function Profile({ currentUser, setCurrentUser, showNotification 
     </div>
   );
 }
+
+Profile.propTypes = {
+  currentUser: PropTypes.object,
+  setCurrentUser: PropTypes.func,
+  showNotification: PropTypes.func
+};

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
   const [editing, setEditing] = useState(false);
@@ -104,8 +105,8 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
                 className="input-modern"
               />
             </div>
-            <button className="button" onClick={handleSave}>Guardar</button>
-            <button className="button" onClick={() => setEditing(false)}>Cancelar</button>
+            <button onClick={handleSave} className="button button-gradient" aria-label="Guardar cambios">Guardar</button>
+            <button onClick={() => setEditing(false)} className="button" aria-label="Cancelar edición">Cancelar</button>
           </>
         ) : (
           <>
@@ -133,13 +134,23 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
             <p style={{ margin: "0.5em 0", color: "#7b2ff2", fontStyle: "italic" }}>
               {contact.mensaje || <span style={{ color: "#aaa" }}>Sin mensaje</span>}
             </p>
-            <button className="button" onClick={() => setEditing(true)}>Editar</button>
-            <button className="button" onClick={() => onDelete(contact.id)}>Eliminar</button>
+            <button onClick={() => setEditing(true)} className="button" aria-label="Editar contacto">Editar</button>
+            <button onClick={() => onDelete(contact.id)} className="button" aria-label="Eliminar contacto">Eliminar</button>
+            <button onClick={() => onToggleFavorite(contact.id)} className="button" aria-label={contact.favorite ? "Quitar de favoritos" : "Marcar como favorito"}>
+              {contact.favorite ? '★' : '☆'}
+            </button>
           </>
         )}
       </div>
     </div>
   );
+};
+
+ContactItem.propTypes = {
+  contact: PropTypes.object.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onToggleFavorite: PropTypes.func.isRequired
 };
 
 export default ContactItem;

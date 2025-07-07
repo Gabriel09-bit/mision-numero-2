@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link, useLocation } from "react-router-dom";
 import { User, Settings, Home, LogOut } from 'lucide-react';
 
@@ -30,7 +31,7 @@ export default function Navbar({ isAuthenticated, onLogout, currentUser, onSetti
         </h1>
       </div>
       {/* Barra de navegación */}
-      <nav className="navbar" style={{
+      <nav className="navbar" role="navigation" aria-label="Barra de navegación principal" style={{
         background: "linear-gradient(90deg, #7b2ff2 0%, #4f8cff 100%)",
         borderRadius: "18px",
         margin: "0 auto",
@@ -110,6 +111,13 @@ export default function Navbar({ isAuthenticated, onLogout, currentUser, onSetti
     </header>
   );
 }
+
+Navbar.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+  onLogout: PropTypes.func.isRequired,
+  currentUser: PropTypes.object,
+  onSettings: PropTypes.func
+};
 
 function NavLinkAnimated({ to, active, children, as = "link", onClick, logout }) {
   const Tag = as === "button" ? "button" : Link;
