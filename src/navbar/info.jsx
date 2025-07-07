@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+
 
 export default function Info() {
   return (
@@ -12,5 +12,3 @@ export default function Info() {
     </section>
   );
 }
-
-Info.propTypes = {};
