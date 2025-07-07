@@ -618,69 +618,32 @@ body.dark-mode .container {
 /* Fondo animado para login */
 .login-bg-animated {
   min-height: 100vh;
-  min-width: 100vw;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(120deg, #e0e7ff 0%, #f4f8ff 100%);
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(120deg, #e0e7ff 0%, #f4f8ff 100%);
+  position: relative;
 }
 body.dark-mode .login-bg-animated {
-  background: linear-gradient(120deg, #181c1f 0%, #232946 100%);
+  background: linear-gradient(120deg, #181c1f 0%, #232946 100%) !important;
 }
-
-/* Burbujas animadas */
-.bubbles-bg {
-  position: absolute;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
-}
-.bubbles-bg::before, .bubbles-bg::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.25;
-  filter: blur(8px);
-  animation: floatBubbles 12s infinite alternate;
-}
-.bubbles-bg::before {
-  width: 220px; height: 220px;
-  left: 10vw; top: 20vh;
-  background: #7b2ff2;
-  animation-delay: 0s;
-}
-.bubbles-bg::after {
-  width: 180px; height: 180px;
-  right: 12vw; bottom: 18vh;
-  background: #4f8cff;
-  animation-delay: 3s;
-}
-@keyframes floatBubbles {
-  0% { transform: translateY(0) scale(1);}
-  100% { transform: translateY(-40px) scale(1.08);}
-}
-
-/* Ajuste para el formulario sobre el fondo */
 .login-container {
-  position: relative;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 320px;
+  min-height: 400px;
+  background: var(--card-light);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px #7b2ff244;
+  padding: 2.5em 2em 2em 2em;
   z-index: 2;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px #7b2ff244;
-  padding: 2.5em 2em;
-  max-width: 400px;
-  margin: 3em auto;
-  animation: fadeInUp 0.8s cubic-bezier(.4,0,.2,1);
 }
 body.dark-mode .login-container {
-  background: #232946;
-  color: #e2e2e2;
+  background: var(--dark-card) !important;
+  color: var(--text-dark) !important;
 }
 
 /* Modal */

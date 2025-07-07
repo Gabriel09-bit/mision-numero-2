@@ -61,7 +61,7 @@ function App() {
       return;
     }
     setLoading(true);
-    fetch('http://localhost:3001/api/contacts', {
+    fetch('https://proyecto-numero-3.onrender.com/api/contacts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -81,7 +81,7 @@ function App() {
   // Editar contacto
   const editContact = (id, updatedContact) => {
     setLoading(true);
-    fetch(`http://localhost:3001/api/contacts/${id}`, {
+    fetch(`https://proyecto-numero-3.onrender.com/api/contacts/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...updatedContact, userId: currentUser.id })
@@ -99,7 +99,7 @@ function App() {
   const deleteContact = (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este contacto?")) return;
     setLoading(true);
-    fetch(`http://localhost:3001/api/contacts/${id}`, {
+    fetch(`https://proyecto-numero-3.onrender.com/api/contacts/${id}`, {
       method: 'DELETE'
     })
       .then(() => {
@@ -175,7 +175,7 @@ function App() {
         };
       }).filter(c => c.nombre && c.numero && c.tipo && c.pais);
       Promise.all(newContacts.map(contact =>
-        fetch('http://localhost:3001/api/contacts', {
+        fetch('https://proyecto-numero-3.onrender.com/api/contacts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(contact)
@@ -192,7 +192,7 @@ function App() {
   useEffect(() => {
     if (currentUser) {
       setLoading(true);
-      fetch(`http://localhost:3001/api/contacts?userId=${currentUser.id}`)
+      fetch(`https://proyecto-numero-3.onrender.com/api/contacts?userId=${currentUser.id}`)
         .then(res => res.json())
         .then(data => setContacts(data))
         .catch(() => setContacts([]))
