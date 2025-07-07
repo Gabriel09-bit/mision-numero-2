@@ -8,15 +8,13 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors()); // Permite peticiones desde otros orígenes (ej: frontend)
-app.use(express.json()); // Permite recibir JSON desde el frontend
-app.use("/api", contactsRouter); // Prefijo para nuestras rutas
-
-// conectarme a la base de datos
+app.use(cors());
+app.use(express.json());
+app.use("/api", contactsRouter);
 
 connect();
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor corriendo en https://proyecto-numero-3.onrender.com/ (puerto: ${PORT})`);
 });

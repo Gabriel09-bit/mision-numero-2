@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Dashboard from './Dashboard';
-import Login from './Login';
-import ContactForm from './ContactForm';
-import ContactList from './ContactList';
-import ContactChart from './ContactChart';
-import Settings from './Settings';
+// import Dashboard from './Dashboard'; // Descomenta si existe
+// import Login from './Login'; // Descomenta si existe
+import ContactForm from './components/ContactForm';
+import ContactList from './components/ContactList';
+import ContactChart from './components/ContactChart';
+// import Settings from './Settings'; // Descomenta si existe
 
 const App = () => {
   const [users, setUsers] = useState([]);
@@ -29,22 +29,9 @@ const App = () => {
   }, []);
 
   const handleLogin = (email, password) => {
-    // Authenticate user with backend API or database
-    const authenticateUser = async () => {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        setIsAuthenticated(true);
-        setCurrentUser(data.user);
-      } else {
-        setNotification('Invalid email or password');
-      }
-    };
-    authenticateUser();
+    // Implementa autenticación real aquí
+    setIsAuthenticated(true);
+    setCurrentUser({ email });
   };
 
   const handleLogout = () => {
@@ -53,17 +40,7 @@ const App = () => {
   };
 
   const handleAddContact = (contact) => {
-    // Add contact to backend API or database
-    const addContact = async () => {
-      const response = await fetch('/api/contacts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contact),
-      });
-      const data = await response.json();
-      setContacts([...contacts, data.contact]);
-    };
-    addContact();
+    setContacts([...contacts, { ...contact, id: Date.now() }]);
   };
 
   const handleSearch = (searchTerm) => {
@@ -75,4 +52,19 @@ const App = () => {
   };
 
   const handleShowForm = () => {
-    setShowForm(!
+    setShowForm(!showForm);
+  };
+
+  // Render básico para ejemplo
+  return (
+    <div className={darkMode ? 'dark' : ''}>
+      <button onClick={handleToggleDarkMode}>Modo oscuro</button>
+      <button onClick={handleShowForm}>{showForm ? 'Ocultar' : 'Agregar contacto'}</button>
+      {showForm && <ContactForm addContact={handleAddContact} />}
+      <ContactList contacts={contacts} onEdit={() => {}} onDelete={() => {}} onToggleFavorite={() => {}} />
+      <ContactChart contacts={contacts} />
+    </div>
+  );
+};
+
+export default App;

@@ -26,15 +26,12 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
   };
 
   const handleSave = () => {
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
     onEdit(contact.id, form);
     setEditing(false);
-    setErrors({}); // Clear errors on successful save
+    setErrors({});
   };
 
-  // Avatar: usa iniciales del nombre
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.nombre || '')}&background=7b2ff2&color=fff`;
 
   return (
@@ -42,78 +39,71 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
       <img
         src={avatarUrl}
         alt="avatar"
-        style={{
-          width: 48,
-          height: 48,
-          borderRadius: "50%",
-          border: "2px solid #7b2ff2",
-          objectFit: "cover",
-          marginTop: 4
-        }}
+        style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid #7b2ff2", objectFit: "cover" }}
       />
       <div style={{ flex: 1 }}>
         {editing ? (
           <>
-          <div className="input-group">
-            <label htmlFor={`nombre-${contact.id}`} className="sr-only">Nombre</label>
-            <input
-              id={`nombre-${contact.id}`}
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              placeholder="Nombre"
-              className="input-modern"
-            />
-            {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
-          </div>
-          <div className="input-group">
-            <label htmlFor={`numero-${contact.id}`} className="sr-only">Número</label>
-            <input
-              id={`numero-${contact.id}`}
-              name="numero"
-              type="tel"
-              value={form.numero}
-              onChange={handleChange}
-              placeholder="Número"
-              className="input-modern"
-            />
-            {errors.numero && <p className="text-red-500 text-sm mt-1">{errors.numero}</p>}
-          </div>
-          <div className="input-group">
-            <label htmlFor={`tipo-${contact.id}`} className="sr-only">Tipo</label>
-            <input
-              id={`tipo-${contact.id}`}
-              name="tipo"
-              value={form.tipo}
-              onChange={handleChange}
-              placeholder="Tipo"
-              className="input-modern"
-            />
-            {errors.tipo && <p className="text-red-500 text-sm mt-1">{errors.tipo}</p>}
-          </div>
-          <div className="input-group">
-            <label htmlFor={`pais-${contact.id}`} className="sr-only">País</label>
-            <input
-              id={`pais-${contact.id}`}
-              name="pais"
-              value={form.pais}
-              onChange={handleChange}
-              placeholder="País"
-              className="input-modern"
-            />
-            {errors.pais && <p className="text-red-500 text-sm mt-1">{errors.pais}</p>}
-          </div>
-          <div className="input-group">
-            <label htmlFor={`mensaje-${contact.id}`} className="sr-only">Mensaje o nota</label>
-            <input
-              id={`mensaje-${contact.id}`}
-              name="mensaje"
-              value={form.mensaje}
-              onChange={handleChange}
-              placeholder="Mensaje o nota"
-              className="input-modern"
-            />
-          </div>
+            <div className="input-group">
+              <label htmlFor={`nombre-${contact.id}`} className="sr-only">Nombre</label>
+              <input
+                id={`nombre-${contact.id}`}
+                name="nombre"
+                value={form.nombre}
+                onChange={handleChange}
+                placeholder="Nombre"
+                className="input-modern"
+              />
+              {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
+            </div>
+            <div className="input-group">
+              <label htmlFor={`numero-${contact.id}`} className="sr-only">Número</label>
+              <input
+                id={`numero-${contact.id}`}
+                name="numero"
+                type="tel"
+                value={form.numero}
+                onChange={handleChange}
+                placeholder="Número"
+                className="input-modern"
+              />
+              {errors.numero && <p className="text-red-500 text-sm mt-1">{errors.numero}</p>}
+            </div>
+            <div className="input-group">
+              <label htmlFor={`tipo-${contact.id}`} className="sr-only">Tipo</label>
+              <input
+                id={`tipo-${contact.id}`}
+                name="tipo"
+                value={form.tipo}
+                onChange={handleChange}
+                placeholder="Tipo"
+                className="input-modern"
+              />
+              {errors.tipo && <p className="text-red-500 text-sm mt-1">{errors.tipo}</p>}
+            </div>
+            <div className="input-group">
+              <label htmlFor={`pais-${contact.id}`} className="sr-only">País</label>
+              <input
+                id={`pais-${contact.id}`}
+                name="pais"
+                value={form.pais}
+                onChange={handleChange}
+                placeholder="País"
+                className="input-modern"
+              />
+              {errors.pais && <p className="text-red-500 text-sm mt-1">{errors.pais}</p>}
+            </div>
+            <div className="input-group">
+              <label htmlFor={`mensaje-${contact.id}`} className="sr-only">Mensaje o nota</label>
+              <input
+                id={`mensaje-${contact.id}`}
+                name="mensaje"
+                value={form.mensaje}
+                onChange={handleChange}
+                placeholder="Mensaje o nota"
+                className="input-modern"
+              />
+            </div>
             <button className="button" onClick={handleSave}>Guardar</button>
             <button className="button" onClick={() => setEditing(false)}>Cancelar</button>
           </>

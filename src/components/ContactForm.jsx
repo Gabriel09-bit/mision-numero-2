@@ -23,19 +23,14 @@ const ContactForm = ({ addContact }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
     addContact(formData);
     setFormData({ nombre: '', numero: '', tipo: '', pais: '', mensaje: '' });
     setErrors({});
   };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -49,63 +44,27 @@ const ContactForm = ({ addContact }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="nombre">Nombre</label>
-          <input
-            id="nombre"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            placeholder="Nombre completo"
-            className="input-modern"
-          />
+          <input id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre completo" className="input-modern" />
           {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
         </div>
         <div>
           <label htmlFor="numero">Número</label>
-          <input
-            id="numero"
-            name="numero"
-            type="tel"
-            value={formData.numero}
-            onChange={handleChange}
-            placeholder="Número de teléfono"
-            className="input-modern"
-          />
+          <input id="numero" name="numero" type="tel" value={formData.numero} onChange={handleChange} placeholder="Número de teléfono" className="input-modern" />
           {errors.numero && <p className="text-red-500 text-sm mt-1">{errors.numero}</p>}
         </div>
         <div>
           <label htmlFor="tipo">Tipo</label>
-          <input
-            id="tipo"
-            name="tipo"
-            value={formData.tipo}
-            onChange={handleChange}
-            placeholder="Tipo de contacto"
-            className="input-modern"
-          />
+          <input id="tipo" name="tipo" value={formData.tipo} onChange={handleChange} placeholder="Tipo de contacto" className="input-modern" />
           {errors.tipo && <p className="text-red-500 text-sm mt-1">{errors.tipo}</p>}
         </div>
         <div>
           <label htmlFor="pais">País</label>
-          <input
-            id="pais"
-            name="pais"
-            value={formData.pais}
-            onChange={handleChange}
-            placeholder="País"
-            className="input-modern"
-          />
+          <input id="pais" name="pais" value={formData.pais} onChange={handleChange} placeholder="País" className="input-modern" />
           {errors.pais && <p className="text-red-500 text-sm mt-1">{errors.pais}</p>}
         </div>
         <div>
           <label>Mensaje</label>
-          <textarea
-            name="mensaje"
-            value={formData.mensaje}
-            onChange={handleChange}
-            placeholder="Mensaje o nota"
-            className="input-modern"
-            rows={2}
-          />
+          <textarea name="mensaje" value={formData.mensaje} onChange={handleChange} placeholder="Mensaje o nota" className="input-modern" rows={2} />
         </div>
         <button className="button" type="submit">Agregar</button>
       </form>

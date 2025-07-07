@@ -8,6 +8,10 @@ export default class ErrorBoundary extends React.Component {
   static getDerivedStateFromError() {
     return { hasError: true };
   }
+  componentDidCatch(error, info) {
+    // Puedes enviar el error a un servicio externo aquí
+    console.error("ErrorBoundary atrapó un error:", error, info);
+  }
   render() {
     if (this.state.hasError) {
       return <h2>Algo salió mal.</h2>;

@@ -3,18 +3,24 @@ import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from '
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const ContactChart = ({ contacts }) => {
+const ContactChart = ({ contacts = [] }) => {
   const getMonthYear = (dateStr) => {
     const date = new Date(dateStr);
     return `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
   };
 
+  const grouped = contacts.reduce((acc, contact) => {
+    const key = getMonthYear(contact.createdAt);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
   const data = {
-    labels: contacts.map((contact) => getMonthYear(contact.createdAt)),
+    labels: Object.keys(grouped),
     datasets: [
       {
         label: 'Contactos por mes',
-        data: contacts.map((contact) => 1),
+        data: Object.values(grouped),
         backgroundColor: [
           'rgba(123,47,242,0.7)',
           'rgba(79,140,255,0.7)',
