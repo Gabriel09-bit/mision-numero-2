@@ -18,10 +18,10 @@ const ContactForm = ({ addContact }) => {
   const validateForm = () => {
     let newErrors = {};
     if (!formData.nombre) newErrors.nombre = 'El nombre es obligatorio';
-    if (formData.nombre.length > NAME_MAX) newErrors.nombre = `El nombre no puede superar ${NAME_MAX} caracteres`;
+    if (formData.nombre.length > NAME_MAX) newErrors.nombre = `Máx. ${NAME_MAX} caracteres`;
     if (!formData.numero) newErrors.numero = 'El número es obligatorio';
-    if (!/^[0-9]+$/.test(formData.numero)) newErrors.numero = 'El número solo puede contener dígitos';
-    if (formData.numero.length > PHONE_MAX) newErrors.numero = `El número no puede superar ${PHONE_MAX} dígitos`;
+    if (!/^[0-9]+$/.test(formData.numero)) newErrors.numero = 'Solo dígitos permitidos';
+    if (formData.numero.length > PHONE_MAX) newErrors.numero = `Máx. ${PHONE_MAX} dígitos`;
     if (!formData.tipo) newErrors.tipo = 'El tipo es obligatorio';
     if (!formData.pais) newErrors.pais = 'El país es obligatorio';
     setErrors(newErrors);
@@ -32,9 +32,11 @@ const ContactForm = ({ addContact }) => {
     e.preventDefault();
     if (!validateForm()) return;
     addContact({
-      ...formData,
       nombre: formData.nombre.trim(),
-      numero: formData.numero.trim()
+      numero: formData.numero.trim(),
+      tipo: formData.tipo,
+      pais: formData.pais,
+      mensaje: formData.mensaje.trim()
     });
     setFormData({ nombre: '', numero: '', tipo: '', pais: '', mensaje: '' });
     setErrors({});
@@ -42,9 +44,17 @@ const ContactForm = ({ addContact }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'nombre' && value.length > NAME_MAX) return;
-    if (name === 'numero' && value.length > PHONE_MAX) return;
-    setFormData({ ...formData, [name]: value });
+    if (name === 'nombre') {
+      if (value.length > NAME_MAX) return;
+      setFormData({ ...formData, nombre: value.replace(/\n/g, '') });
+    } else if (name === 'numero') {
+      // Solo dígitos
+      const digits = value.replace(/\D/g, '');
+      if (digits.length > PHONE_MAX) return;
+      setFormData({ ...formData, numero: digits });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   return (
@@ -59,11 +69,19 @@ const ContactForm = ({ addContact }) => {
         <div>
           <label htmlFor="nombre">Nombre</label>
           <input id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre completo" className="input-modern" maxLength={NAME_MAX} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+            <span style={{ color: formData.nombre.length === NAME_MAX ? '#e53e3e' : '#888' }}>{formData.nombre.length}/{NAME_MAX}</span>
+            {formData.nombre.length === NAME_MAX && <span style={{ color: '#e53e3e' }}>¡Límite alcanzado!</span>}
+          </div>
           {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
         </div>
         <div>
           <label htmlFor="numero">Número</label>
           <input id="numero" name="numero" type="tel" value={formData.numero} onChange={handleChange} placeholder="Número de teléfono" className="input-modern" maxLength={PHONE_MAX} pattern="[0-9]*" inputMode="numeric" />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+            <span style={{ color: formData.numero.length === PHONE_MAX ? '#e53e3e' : '#888' }}>{formData.numero.length}/{PHONE_MAX}</span>
+            {formData.numero.length === PHONE_MAX && <span style={{ color: '#e53e3e' }}>¡Límite alcanzado!</span>}
+          </div>
           {errors.numero && <p className="text-red-500 text-sm mt-1">{errors.numero}</p>}
         </div>
         <div>
@@ -78,7 +96,7 @@ const ContactForm = ({ addContact }) => {
         </div>
         <div>
           <label>Mensaje</label>
-          <textarea name="mensaje" value={formData.mensaje} onChange={handleChange} placeholder="Mensaje o nota" className="input-modern" rows={2} />
+          <textarea name="mensaje" value={formData.mensaje} onChange={handleChange} placeholder="Mensaje o nota" className="input-modern" rows={2} maxLength={200} />
         </div>
         <button type="submit" className="button button-gradient" disabled={Object.keys(errors).length > 0}>
           Agregar contacto

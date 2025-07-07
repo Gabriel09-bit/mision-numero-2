@@ -5,22 +5,33 @@ import { Moon, Sun } from "lucide-react";
 export default function Login({ onLogin, darkMode, setDarkMode }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    if (!email || !password) return;
-    onLogin(email, password);
+    setError("");
+    if (!email || !password) {
+      setError("Completa todos los campos");
+      return;
+    }
+    setLoading(true);
+    try {
+      await onLogin(email, password);
+    } catch (err) {
+      setError("Credenciales incorrectas");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="login-bg-animated">
+    <div className="login-bg-animated" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {/* Botón modo oscuro arriba a la derecha */}
       <div style={{
         position: "absolute",
         top: 24,
         right: 36,
-        display: "flex",
-        gap: 0,
         zIndex: 10
       }}>
         <button
@@ -35,8 +46,6 @@ export default function Login({ onLogin, darkMode, setDarkMode }) {
           }
         </button>
       </div>
-      {/* Fondo animado */}
-      <div className="bubbles-bg"></div>
       <div className="login-container" style={{
         textAlign: "center",
         position: "relative",
@@ -51,7 +60,8 @@ export default function Login({ onLogin, darkMode, setDarkMode }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        animation: 'fadeInUp 0.5s'
       }}>
         <h1 style={{
           color: "#4f8cff",
@@ -79,7 +89,8 @@ export default function Login({ onLogin, darkMode, setDarkMode }) {
             onChange={e => setEmail(e.target.value)}
             required
             aria-label="Correo electrónico"
-            style={{ padding: "0.9em", borderRadius: 8, border: "1.5px solid #7b2ff2", fontSize: "1.1em" }}
+            style={{ padding: "1.1em", borderRadius: 10, border: "1.5px solid #7b2ff2", fontSize: "1.15em", boxShadow: '0 2px 8px #7b2ff222' }}
+            autoFocus
           />
           <input
             type="password"
@@ -88,10 +99,11 @@ export default function Login({ onLogin, darkMode, setDarkMode }) {
             onChange={e => setPassword(e.target.value)}
             required
             aria-label="Contraseña"
-            style={{ padding: "0.9em", borderRadius: 8, border: "1.5px solid #7b2ff2", fontSize: "1.1em" }}
+            style={{ padding: "1.1em", borderRadius: 10, border: "1.5px solid #7b2ff2", fontSize: "1.15em", boxShadow: '0 2px 8px #7b2ff222' }}
           />
-          <button type="submit" className="button button-gradient" disabled={!email || !password} aria-label="Iniciar sesión" style={{ fontSize: "1.1em", padding: "0.8em 0" }}>
-            Iniciar sesión
+          {error && <div style={{ color: '#e53e3e', fontWeight: 600, marginBottom: -10 }}>{error}</div>}
+          <button type="submit" className="button button-gradient" disabled={!email || !password || loading} aria-label="Iniciar sesión" style={{ fontSize: "1.15em", padding: "0.9em 0", marginTop: 8 }}>
+            {loading ? 'Ingresando...' : 'Iniciar sesión'}
           </button>
         </form>
       </div>
