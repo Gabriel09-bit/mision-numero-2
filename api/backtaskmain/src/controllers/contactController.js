@@ -16,6 +16,7 @@ export const getContacts = async (req, res) => {
 
 export const createContacts = async (req, res) => {
   const { numero, tipo, pais, userId, nombre, mensaje } = req.body;
+  console.log('Datos recibidos en backend:', req.body); // LOG para depuración
   if (!numero || !tipo || !pais || !userId || !nombre) {
     return res.status(400).json({ error: "Faltan campos obligatorios" });
   }
@@ -23,6 +24,7 @@ export const createContacts = async (req, res) => {
     const contact = await prisma.contact.create({
       data: { numero, tipo, pais, userId, nombre, mensaje },
     });
+    console.log('Contacto creado y enviado al frontend:', contact); // LOG para depuración
     res.status(201).json(contact);
   } catch (error) {
     console.error("Error creating contact:", error);
