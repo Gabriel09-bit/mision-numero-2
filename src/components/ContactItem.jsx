@@ -9,14 +9,29 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
     pais: contact.pais,
     mensaje: contact.mensaje || ""
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    let newErrors = {};
+    if (!form.nombre) newErrors.nombre = 'El nombre es obligatorio';
+    if (!form.numero) newErrors.numero = 'El número es obligatorio';
+    if (!form.tipo) newErrors.tipo = 'El tipo es obligatorio';
+    if (!form.pais) newErrors.pais = 'El país es obligatorio';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = () => {
+    if (!validateForm()) {
+      return;
+    }
     onEdit(contact.id, form);
     setEditing(false);
+    setErrors({}); // Clear errors on successful save
   };
 
   // Avatar: usa iniciales del nombre
@@ -39,41 +54,66 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
       <div style={{ flex: 1 }}>
         {editing ? (
           <>
+          <div className="input-group">
+            <label htmlFor={`nombre-${contact.id}`} className="sr-only">Nombre</label>
             <input
+              id={`nombre-${contact.id}`}
               name="nombre"
               value={form.nombre}
               onChange={handleChange}
               placeholder="Nombre"
               className="input-modern"
             />
+            {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
+          </div>
+          <div className="input-group">
+            <label htmlFor={`numero-${contact.id}`} className="sr-only">Número</label>
             <input
+              id={`numero-${contact.id}`}
               name="numero"
+              type="tel"
               value={form.numero}
               onChange={handleChange}
               placeholder="Número"
               className="input-modern"
             />
+            {errors.numero && <p className="text-red-500 text-sm mt-1">{errors.numero}</p>}
+          </div>
+          <div className="input-group">
+            <label htmlFor={`tipo-${contact.id}`} className="sr-only">Tipo</label>
             <input
+              id={`tipo-${contact.id}`}
               name="tipo"
               value={form.tipo}
               onChange={handleChange}
               placeholder="Tipo"
               className="input-modern"
             />
+            {errors.tipo && <p className="text-red-500 text-sm mt-1">{errors.tipo}</p>}
+          </div>
+          <div className="input-group">
+            <label htmlFor={`pais-${contact.id}`} className="sr-only">País</label>
             <input
+              id={`pais-${contact.id}`}
               name="pais"
               value={form.pais}
               onChange={handleChange}
               placeholder="País"
               className="input-modern"
             />
+            {errors.pais && <p className="text-red-500 text-sm mt-1">{errors.pais}</p>}
+          </div>
+          <div className="input-group">
+            <label htmlFor={`mensaje-${contact.id}`} className="sr-only">Mensaje o nota</label>
             <input
+              id={`mensaje-${contact.id}`}
               name="mensaje"
               value={form.mensaje}
               onChange={handleChange}
               placeholder="Mensaje o nota"
               className="input-modern"
             />
+          </div>
             <button className="button" onClick={handleSave}>Guardar</button>
             <button className="button" onClick={() => setEditing(false)}>Cancelar</button>
           </>
@@ -92,6 +132,7 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
                 }}
                 title={contact.favorite ? "Quitar de favoritos" : "Marcar como favorito"}
                 onClick={() => onToggleFavorite(contact.id)}
+                aria-label={contact.favorite ? "Quitar de favoritos" : "Marcar como favorito"}
               >
                 {contact.favorite ? "★" : "☆"}
               </button>

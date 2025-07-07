@@ -9,15 +9,26 @@ const ContactForm = ({ addContact }) => {
     pais: '',
     mensaje: ''
   });
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    let newErrors = {};
+    if (!formData.nombre) newErrors.nombre = 'El nombre es obligatorio';
+    if (!formData.numero) newErrors.numero = 'El número es obligatorio';
+    if (!formData.tipo) newErrors.tipo = 'El tipo es obligatorio';
+    if (!formData.pais) newErrors.pais = 'El país es obligatorio';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.nombre || !formData.numero || !formData.tipo || !formData.pais) {
-      alert('Por favor, completa todos los campos obligatorios');
+    if (!validateForm()) {
       return;
     }
     addContact(formData);
     setFormData({ nombre: '', numero: '', tipo: '', pais: '', mensaje: '' });
+    setErrors({});
   };
 
   const handleChange = (e) => {
@@ -37,48 +48,53 @@ const ContactForm = ({ addContact }) => {
       </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label>Nombre</label>
+          <label htmlFor="nombre">Nombre</label>
           <input
+            id="nombre"
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
             placeholder="Nombre completo"
             className="input-modern"
-            required
           />
+          {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
         </div>
         <div>
-          <label>Número</label>
+          <label htmlFor="numero">Número</label>
           <input
+            id="numero"
             name="numero"
+            type="tel"
             value={formData.numero}
             onChange={handleChange}
             placeholder="Número de teléfono"
             className="input-modern"
-            required
           />
+          {errors.numero && <p className="text-red-500 text-sm mt-1">{errors.numero}</p>}
         </div>
         <div>
-          <label>Tipo</label>
+          <label htmlFor="tipo">Tipo</label>
           <input
+            id="tipo"
             name="tipo"
             value={formData.tipo}
             onChange={handleChange}
             placeholder="Tipo de contacto"
             className="input-modern"
-            required
           />
+          {errors.tipo && <p className="text-red-500 text-sm mt-1">{errors.tipo}</p>}
         </div>
         <div>
-          <label>País</label>
+          <label htmlFor="pais">País</label>
           <input
+            id="pais"
             name="pais"
             value={formData.pais}
             onChange={handleChange}
             placeholder="País"
             className="input-modern"
-            required
           />
+          {errors.pais && <p className="text-red-500 text-sm mt-1">{errors.pais}</p>}
         </div>
         <div>
           <label>Mensaje</label>

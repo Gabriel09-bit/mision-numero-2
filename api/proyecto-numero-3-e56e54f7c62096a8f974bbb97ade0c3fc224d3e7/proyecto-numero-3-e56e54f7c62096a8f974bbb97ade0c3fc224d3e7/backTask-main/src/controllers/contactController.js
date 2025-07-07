@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-// CREAMOS LOS CONTROLADORES PARA EL MODELO TAREAS
+// Controladores para el modelo Contact
 
 // EVENT LOOP
 
@@ -9,13 +9,12 @@ export const getContacts = async (req, res) => {
   try {
     const contacts = await prisma.contact.findMany({
       include: {
-        user: true,
-      
+        user: true
       },
     });
     res.json(contacts);
   } catch (error) {
-    console.error("Error fetching tasks:", error);
+    console.error("Error fetching contacts:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -31,6 +30,35 @@ export const createContacts = async (req, res) => {
     });
     res.json(contact);
   } catch (error) {
+    console.error("Error creating contact:", error);
+    res.status(400).json({ error: "Error al crear contacto" });
+  }
+};
+
+export const updateContacts = async (req, res) => {
+  const { id } = req.params;
+  const { numero,tipo,pais, userId } = req.body;
+  try {
+    const contact = await prisma.contact.update({
+      where: { id: Number(id) },
+      data: { numero,tipo,pais, userId },
+    });
+    res.json(contact);
+  } catch (error) {
+    res.status(404).json({ error: "Contacto no encontrado" });
+  }
+};
+
+// Eliminar un contacto
+export const deleteContacts = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.contact.delete({ where: { id: Number(id) } });
+    res.json({ message: "Contacto eliminado correctamente" });
+  } catch (error) {
+    res.status(404).json({ error: "contacto no encontrado" });
+  }
+};
     console.error("Error creating contact:", error);
     res.status(400).json({ error: "Error al crear contacto" });
   }
