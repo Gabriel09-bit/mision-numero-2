@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Plus } from 'lucide-react';
 
@@ -14,6 +14,11 @@ const ContactForm = ({ addContact }) => {
     mensaje: ''
   });
   const [errors, setErrors] = useState({});
+  const nombreRef = useRef(null);
+
+  useEffect(() => {
+    if (nombreRef.current) nombreRef.current.focus();
+  }, []);
 
   const validateForm = () => {
     let newErrors = {};
@@ -65,10 +70,10 @@ const ContactForm = ({ addContact }) => {
         </div>
         <h2 className="text-2xl font-bold text-gradient">Agregar nuevo contacto</h2>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6" role="form" aria-label="Formulario de contacto">
         <div>
           <label htmlFor="nombre">Nombre</label>
-          <input id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre completo" className="input-modern" maxLength={NAME_MAX} />
+          <input id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre completo" className="input-modern" maxLength={NAME_MAX} ref={nombreRef} aria-label="Nombre" />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
             <span style={{ color: formData.nombre.length === NAME_MAX ? '#e53e3e' : '#888' }}>{formData.nombre.length}/{NAME_MAX}</span>
             {formData.nombre.length === NAME_MAX && <span style={{ color: '#e53e3e' }}>¡Límite alcanzado!</span>}
@@ -77,7 +82,7 @@ const ContactForm = ({ addContact }) => {
         </div>
         <div>
           <label htmlFor="numero">Número</label>
-          <input id="numero" name="numero" type="tel" value={formData.numero} onChange={handleChange} placeholder="Número de teléfono" className="input-modern" maxLength={PHONE_MAX} pattern="[0-9]*" inputMode="numeric" />
+          <input id="numero" name="numero" type="tel" value={formData.numero} onChange={handleChange} placeholder="Número de teléfono" className="input-modern" maxLength={PHONE_MAX} pattern="[0-9]*" inputMode="numeric" aria-label="Número de teléfono" />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
             <span style={{ color: formData.numero.length === PHONE_MAX ? '#e53e3e' : '#888' }}>{formData.numero.length}/{PHONE_MAX}</span>
             {formData.numero.length === PHONE_MAX && <span style={{ color: '#e53e3e' }}>¡Límite alcanzado!</span>}
@@ -86,19 +91,19 @@ const ContactForm = ({ addContact }) => {
         </div>
         <div>
           <label htmlFor="tipo">Tipo</label>
-          <input id="tipo" name="tipo" value={formData.tipo} onChange={handleChange} placeholder="Tipo de contacto" className="input-modern" />
+          <input id="tipo" name="tipo" value={formData.tipo} onChange={handleChange} placeholder="Tipo de contacto" className="input-modern" aria-label="Tipo de contacto" />
           {errors.tipo && <p className="text-red-500 text-sm mt-1">{errors.tipo}</p>}
         </div>
         <div>
           <label htmlFor="pais">País</label>
-          <input id="pais" name="pais" value={formData.pais} onChange={handleChange} placeholder="País" className="input-modern" />
+          <input id="pais" name="pais" value={formData.pais} onChange={handleChange} placeholder="País" className="input-modern" aria-label="País" />
           {errors.pais && <p className="text-red-500 text-sm mt-1">{errors.pais}</p>}
         </div>
         <div>
           <label>Mensaje</label>
-          <textarea name="mensaje" value={formData.mensaje} onChange={handleChange} placeholder="Mensaje o nota" className="input-modern" rows={2} maxLength={200} />
+          <textarea name="mensaje" value={formData.mensaje} onChange={handleChange} placeholder="Mensaje o nota" className="input-modern" rows={2} maxLength={200} aria-label="Mensaje" />
         </div>
-        <button type="submit" className="button button-gradient" disabled={Object.keys(errors).length > 0}>
+        <button type="submit" className="button button-gradient" disabled={Object.keys(errors).length > 0} aria-label="Agregar contacto">
           Agregar contacto
         </button>
       </form>

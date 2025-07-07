@@ -14,8 +14,8 @@ import './styles/App.css';
 function App() {
   // Multiusuario: lista de usuarios y usuario actual
   const [users, setUsers] = useState([
-    { id: 1, name: "Juan Pérez", email: "juan@mail.com", password: "1234", avatar: "" },
-    { id: 2, name: "Ana López", email: "ana@mail.com", password: "abcd", avatar: "" }
+    { id: 1, nombre: "Juan Pérez", email: "juan@mail.com", password: "1234", avatar: "" },
+    { id: 2, nombre: "Ana López", email: "ana@mail.com", password: "abcd", avatar: "" }
   ]);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -41,7 +41,7 @@ function App() {
     if (user) {
       setIsAuthenticated(true);
       setCurrentUser(user);
-      showNotification(`Bienvenido ${user.name}`, "success");
+      showNotification(`Bienvenido ${user.nombre}`, "success");
     } else {
       showNotification("Credenciales incorrectas", "error");
     }
@@ -301,7 +301,7 @@ function App() {
                     />
                   )}
                   <h1 style={{ marginBottom: 0, fontWeight: 900, color: "#4f8cff" }}>
-                    ¡Bienvenido, <b>{currentUser?.name}</b>!
+                    ¡Bienvenido, <b>{currentUser?.nombre}</b>!
                   </h1>
                   <button
                     className="button registro-contactos"

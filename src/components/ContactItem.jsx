@@ -36,11 +36,22 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent((contact.nombre || form.nombre || 'Sin nombre'))}&background=7b2ff2&color=fff`;
 
   return (
-    <div className="contact-item" style={{ display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 18 }}>
+    <div className="contact-item" style={{
+      display: "flex",
+      alignItems: "flex-start",
+      gap: 18,
+      marginBottom: 22,
+      background: "#fff",
+      borderRadius: 14,
+      boxShadow: "0 2px 12px #7b2ff222",
+      padding: "1.2em 1.5em",
+      borderLeft: contact.favorite ? '5px solid #FFD700' : '5px solid #7b2ff2',
+      transition: 'box-shadow 0.2s, border 0.2s'
+    }}>
       <img
         src={avatarUrl}
         alt="avatar"
-        style={{ width: 48, height: 48, borderRadius: "50%", border: "2px solid #7b2ff2", objectFit: "cover" }}
+        style={{ width: 54, height: 54, borderRadius: "50%", border: "2px solid #7b2ff2", objectFit: "cover", marginRight: 10 }}
       />
       <div style={{ flex: 1 }}>
         {editing ? (
@@ -56,43 +67,6 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
                 className="input-modern"
               />
               {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
-            </div>
-            <div className="input-group">
-              <label htmlFor={`numero-${contact.id}`} className="sr-only">Número</label>
-              <input
-                id={`numero-${contact.id}`}
-                name="numero"
-                type="tel"
-                value={form.numero}
-                onChange={handleChange}
-                placeholder="Número"
-                className="input-modern"
-              />
-              {errors.numero && <p className="text-red-500 text-sm mt-1">{errors.numero}</p>}
-            </div>
-            <div className="input-group">
-              <label htmlFor={`tipo-${contact.id}`} className="sr-only">Tipo</label>
-              <input
-                id={`tipo-${contact.id}`}
-                name="tipo"
-                value={form.tipo}
-                onChange={handleChange}
-                placeholder="Tipo"
-                className="input-modern"
-              />
-              {errors.tipo && <p className="text-red-500 text-sm mt-1">{errors.tipo}</p>}
-            </div>
-            <div className="input-group">
-              <label htmlFor={`pais-${contact.id}`} className="sr-only">País</label>
-              <input
-                id={`pais-${contact.id}`}
-                name="pais"
-                value={form.pais}
-                onChange={handleChange}
-                placeholder="País"
-                className="input-modern"
-              />
-              {errors.pais && <p className="text-red-500 text-sm mt-1">{errors.pais}</p>}
             </div>
             <div className="input-group">
               <label htmlFor={`mensaje-${contact.id}`} className="sr-only">Mensaje</label>
@@ -111,23 +85,25 @@ const ContactItem = ({ contact, onEdit, onDelete, onToggleFavorite }) => {
           </>
         ) : (
           <>
-            <div style={{ fontWeight: 700, fontSize: '1.1em', color: '#4f8cff', marginBottom: 2 }}>
+            <div style={{ fontWeight: 900, fontSize: '1.18em', color: '#4f8cff', marginBottom: 2, letterSpacing: 0.5 }}>
               {contact.nombre || 'Sin nombre'}
             </div>
-            <div style={{ color: '#888', fontSize: '0.98em', marginBottom: 4 }}>
-              {contact.mensaje ? <span>📝 {contact.mensaje}</span> : <span style={{ color: '#bbb' }}>Sin mensaje</span>}
+            <div style={{ color: '#7b2ff2', fontSize: '1.05em', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: 18 }}>💬</span> {contact.mensaje ? contact.mensaje : <span style={{ color: '#bbb' }}>Sin mensaje</span>}
             </div>
-            <div style={{ fontSize: '0.97em', marginBottom: 2 }}>
+            <div style={{ fontSize: '0.99em', marginBottom: 2, color: '#333' }}>
               <b>Número:</b> {contact.numero}
             </div>
-            <div style={{ fontSize: '0.97em', marginBottom: 2 }}>
+            <div style={{ fontSize: '0.99em', marginBottom: 2, color: '#333' }}>
               <b>Tipo:</b> {contact.tipo} <b>País:</b> {contact.pais}
             </div>
-            <button onClick={() => setEditing(true)} className="button" aria-label="Editar contacto">Editar</button>
-            <button onClick={() => onDelete(contact.id)} className="button" aria-label="Eliminar contacto">Eliminar</button>
-            <button onClick={() => onToggleFavorite(contact.id)} className="button" aria-label={contact.favorite ? "Quitar de favoritos" : "Marcar como favorito"}>
-              {contact.favorite ? '★' : '☆'}
-            </button>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <button onClick={() => setEditing(true)} className="button" aria-label="Editar contacto">Editar</button>
+              <button onClick={() => onDelete(contact.id)} className="button" aria-label="Eliminar contacto">Eliminar</button>
+              <button onClick={() => onToggleFavorite(contact.id)} className="button" aria-label={contact.favorite ? "Quitar de favoritos" : "Marcar como favorito"}>
+                {contact.favorite ? '★' : '☆'}
+              </button>
+            </div>
           </>
         )}
       </div>
